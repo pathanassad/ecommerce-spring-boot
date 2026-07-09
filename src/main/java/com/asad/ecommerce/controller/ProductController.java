@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.asad.ecommerce.model.Product;
 import com.asad.ecommerce.service.ProductService;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
 
 @CrossOrigin
@@ -38,5 +40,25 @@ public class ProductController {
 
 
     }
+     @PostMapping("/product")
+     public ResponseEntity<?> addProduct(@RequestPart Product product, @RequestPart MultipartFile imageFile){
+           try {
+               Product product1 = service.addProduct(product, imageFile);
+               return new ResponseEntity<>(HttpStatus.CREATED);
+           }catch (Exception e){
+               return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+           }
+
+     }
+
+     @GetMapping("/product/{productId}/image")
+     public ResponseEntity<byte[]> getProductImageById(@PathVariable int productId){
+        Product product = service.getProductById(productId);
+        byte[] imageFile = product.getImageData();
+
+        return ResponseEntity.ok()
+                .body(imageFile);
+     }
+
 }
 
